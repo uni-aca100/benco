@@ -104,7 +104,6 @@ docker build -t benco .
 Launch from the benco directory the client container, granting GPU access, enabling host networking, and sharing the IPC memory segment:
 
 ```bash
-docker run --gpus all --network host --ipc=host --rm -it -v $(pwd)/benco:/workspace benco bash /workspace/test_mymodel.sh
-
+docker run --gpus all --network host --ipc=host --rm -it -v $(pwd)/benco:/workspace -v /run/imdl-mllm:/tmp/socket benco bash /workspace/test_mymodel.sh
 
 ```

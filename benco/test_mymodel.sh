@@ -14,7 +14,8 @@ python ./test.py \
     --if_resizing \
     --output_dir ${base_dir}/ \
     --log_dir ${base_dir}/ \
-    --model_endpoint "http://localhost:8000/pred/" \
+    --model_sock "/tmp/socket/uvicorn.sock" \
+    --model_req_path '/pred/' \
     --request_retry_timeout 300 \
     --request_retries 2 \
     --request_retry_initial_delay 20 \

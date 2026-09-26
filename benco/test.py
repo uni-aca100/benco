@@ -17,6 +17,7 @@ from IMDLBenCo.evaluation import PixelF1, ImageF1    # TODO You can select evalu
 
 from IMDLBenCo.training_scripts.tester import test_one_epoch
 from mymodel import MyModel  # TODO, you need to change this line when modifying the name model
+from mypostfun import mymodel_post_func
 
 def get_args_parser():
     parser = argparse.ArgumentParser('IMDLBench testing launch!', add_help=True)
@@ -130,31 +131,31 @@ def main(args, model_args):
     
     # ========define the model directly==========
 
-    model = MyModel(
-        MyModel_Customized_param = model_args.MyModel_Customized_param,
-        pre_trained_weights = model_args.pre_trained_weights,
-        model_endpoint = getattr(model_args, "model_endpoint", "http://localhost:8000/pred/"),
-        request_retry_timeout = getattr(model_args, "request_retry_timeout", 300),
-        request_retries = getattr(model_args, "request_retries", 3),
-        request_retry_initial_delay = getattr(model_args, "request_retry_initial_delay", 60),
-        request_retry_delay_factor = getattr(model_args, "request_retry_delay_factor", 2),
-    )
+    # model = MyModel(
+    #     MyModel_Customized_param = model_args.MyModel_Customized_param,
+    #     pre_trained_weights = model_args.pre_trained_weights,
+    #     model_sock = getattr(model_args, "model_sock", "/run/imdl-mllm/uvicorn.sock"),
+    #     request_retry_timeout = getattr(model_args, "request_retry_timeout", 300),
+    #     request_retries = getattr(model_args, "request_retries", 3),
+    #     request_retry_initial_delay = getattr(model_args, "request_retry_initial_delay", 60),
+    #     request_retry_delay_factor = getattr(model_args, "request_retry_delay_factor", 2),
+    # )
     
     # --------------- or -------------------------
     # Init model with registry
-    # model = MODELS.get(args.model)
+    model = MODELS.get(args.model)
     
-    # # Filt usefull args
-    # if isinstance(model,(types.FunctionType, types.MethodType)):
-    #     model_init_params = inspect.signature(model).parameters
-    # else:
-    #     model_init_params = inspect.signature(model.__init__).parameters
+    # Filt usefull args
+    if isinstance(model,(types.FunctionType, types.MethodType)):
+        model_init_params = inspect.signature(model).parameters
+    else:
+        model_init_params = inspect.signature(model.__init__).parameters
         
-    # combined_args = {k: v for k, v in vars(args).items() if k in model_init_params}
-    # for k, v in vars(model_args).items():
-    #     if k in model_init_params and k not in combined_args:
-    #         combined_args[k] = v
-    # model = model(**combined_args)
+    combined_args = {k: v for k, v in vars(args).items() if k in model_init_params}
+    for k, v in vars(model_args).items():
+        if k in model_init_params and k not in combined_args:
+            combined_args[k] = v
+    model = model(**combined_args)
     # ============================================
 
     """
