@@ -1,4 +1,4 @@
-### 4.4 Deployment Instructions
+### Deployment Instructions
 
 Below is the step-by-step procedure for deploying the entire infrastructure and executing the benchmark tests.
 
